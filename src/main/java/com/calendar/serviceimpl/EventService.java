@@ -28,8 +28,13 @@ public class EventService {
 	}
 
 	public Event saveEvent(Event event,  HttpServletRequest request) {
+		String clientIP = (String) request.getAttribute("clientIP");
+		String location = (String) request.getAttribute("location");
+		String timezone = (String) request.getAttribute("timezone");
 		event.setCreatedAt(LocalDateTime.now());
-//        event.setIpAddress(request.getRemoteAddr());
+        event.setIpAddress(clientIP);
+        event.setLocation(location);
+        event.setTimezone(timezone);
 		Event saveEvent = eventRepository.save(event);
 		return saveEvent;
 	}

@@ -15,7 +15,7 @@ public class Event {
 	private String title;
 	private Date start;
 	private Date end;
-//	private String ipAddress;
+	private String ipAddress;
 	private LocalDateTime createdAt;
 	private String location;
 	private String timezone;
@@ -62,13 +62,13 @@ public class Event {
 		this.end = end;
 	}
 
-//	public String getIpAddress() {
-//		return ipAddress;
-//	}
-//	
-//	public void setIpAddress(String ipAddress) {
-//		this.ipAddress = ipAddress;
-//	}
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
