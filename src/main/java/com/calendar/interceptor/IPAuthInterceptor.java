@@ -33,32 +33,31 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 
 			if (!awsPublicIP.isEmpty()) {
 				allowedIps.add(awsPublicIP);
-				LOGGER.info("✅ AWS Public IP added: " + awsPublicIP);
+				LOGGER.info("AWS Public IP added: " + awsPublicIP);
 			}
 			if (!awsPrivateIP.isEmpty()) {
 				allowedIps.add(awsPrivateIP);
-				LOGGER.info("✅ AWS Private IP added: " + awsPrivateIP);
+				LOGGER.info("AWS Private IP added: " + awsPrivateIP);
 			}
 		}
 
-		LOGGER.info("✅ Allowed IPs: " + allowedIps);
+		LOGGER.info("Allowed IPs: " + allowedIps);
 	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		String clientIP = getClientIP(request);
-		LOGGER.info("📌 Incoming request from Client IP: " + clientIP);
-		LOGGER.info("📌 Allowed IPs List: " + allowedIps);
+		LOGGER.info("Incoming request from Client IP: " + clientIP);
+		LOGGER.info("Allowed IPs List: " + allowedIps);
 
 		if (!allowedIps.contains(clientIP)) {
-			LOGGER.warning("🚫 Access Denied for IP: " + clientIP);
+			LOGGER.warning("Access Denied for IP: " + clientIP);
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			response.getWriter().write("Access Denied: Unauthorized IP - " + clientIP);
 			return false;
 		}
 
-		// Fetch IP-based location and timezone
 		JSONObject locationData = getIPLocation(clientIP);
 		if (locationData != null) {
 			String country = locationData.getString("country");
@@ -68,14 +67,14 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 
 			request.setAttribute("location", country + ", " + region + ", " + city);
 			request.setAttribute("timezone", timezone);
-			LOGGER.info("🌍 Client Location: " + locationData.toString(2));
+			LOGGER.info("Client Location: " + locationData.toString(2));
 		} else {
-			LOGGER.warning("❌ Failed to fetch location data.");
+			LOGGER.warning("Failed to fetch location data.");
 		}
 
 		request.setAttribute("clientIP", clientIP);
 
-		LOGGER.info("✅ Access Granted for IP: " + clientIP);
+		LOGGER.info("Access Granted for IP: " + clientIP);
 		return true;
 	}
 
@@ -83,23 +82,23 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 		String ip = request.getHeader("X-Forwarded-For");
 
 		if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-			ip = ip.split(",")[0].trim(); // Get the first valid IP in case of multiple values
-			LOGGER.info("✅ Using 'X-Forwarded-For' IP: " + ip);
+			ip = ip.split(",")[0].trim();
+			LOGGER.info("Using 'X-Forwarded-For' IP: " + ip);
 			return ip;
 		}
 
 		ip = request.getHeader("X-Real-IP");
 		if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-			LOGGER.info("✅ Using 'X-Real-IP' header: " + ip);
+			LOGGER.info("Using 'X-Real-IP' header: " + ip);
 			return ip;
 		}
 
 		ip = request.getRemoteAddr();
-		LOGGER.info("✅ Using 'request.getRemoteAddr()': " + ip);
+		LOGGER.info("Using 'request.getRemoteAddr()': " + ip);
 
 		if ("0:0:0:0:0:0:0:1".equals(ip)) {
-			ip = "127.0.0.1"; // Convert IPv6 localhost to IPv4
-			LOGGER.info("✅ Converted IPv6 localhost to IPv4: " + ip);
+			ip = "127.0.0.1";
+			LOGGER.info("Converted IPv6 localhost to IPv4: " + ip);
 		}
 
 		return ip;
@@ -112,10 +111,10 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 			conn.setRequestMethod("GET");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String awsPublicIP = reader.readLine().trim();
-			LOGGER.info("✅ Fetched AWS Public IP: " + awsPublicIP);
+			LOGGER.info("Fetched AWS Public IP: " + awsPublicIP);
 			return awsPublicIP;
 		} catch (Exception e) {
-			LOGGER.severe("❌ Failed to fetch AWS Public IP: " + e.getMessage());
+			LOGGER.severe("Failed to fetch AWS Public IP: " + e.getMessage());
 			return "";
 		}
 	}
@@ -127,10 +126,10 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 			conn.setRequestMethod("GET");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String awsPrivateIP = reader.readLine().trim();
-			LOGGER.info("✅ Fetched AWS Private IP: " + awsPrivateIP);
+			LOGGER.info("Fetched AWS Private IP: " + awsPrivateIP);
 			return awsPrivateIP;
 		} catch (Exception e) {
-			LOGGER.severe("❌ Failed to fetch AWS Private IP: " + e.getMessage());
+			LOGGER.severe("Failed to fetch AWS Private IP: " + e.getMessage());
 			return "";
 		}
 	}
@@ -139,7 +138,6 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 //		String ip = "49.36.27.149";
 //		String ip = "13.201.83.130";
 		try {
-			// Use IP-API.com for geolocation lookup
 			String urlStr = "http://ip-api.com/json/" + ip;
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -161,17 +159,17 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 				String city = jsonResponse.getString("city");
 				String timezone = jsonResponse.getString("timezone");
 
-				LOGGER.info("📍 IP Location: " + country + ", " + region + ", " + city);
-				LOGGER.info("⏳ Timezone: " + timezone);
+				LOGGER.info("IP Location: " + country + ", " + region + ", " + city);
+				LOGGER.info("Timezone: " + timezone);
 
 				return jsonResponse;
 			} else {
-				LOGGER.warning("❌ Failed to retrieve location data for IP: " + ip);
+				LOGGER.warning("Failed to retrieve location data for IP: " + ip);
 				return null;
 			}
 
 		} catch (Exception e) {
-			LOGGER.severe("❌ Error fetching IP location: " + e.getMessage());
+			LOGGER.severe("Error fetching IP location: " + e.getMessage());
 			return null;
 		}
 	}
