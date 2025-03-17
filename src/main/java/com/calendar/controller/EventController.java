@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.calendar.entity.Event;
+import com.calendar.interceptor.IPAuthInterceptor;
 import com.calendar.serviceimpl.EventService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -21,6 +23,16 @@ public class EventController {
 
 	@Autowired
 	EventService eventService;
+
+	@Autowired
+	private IPAuthInterceptor ipAuthInterceptor;
+
+	@PostMapping("/addallowedip")
+	public ResponseEntity<String> addAllowedIp(@RequestBody Map<String, String> body) {
+		String ip = body.get("ip"); 
+		ipAuthInterceptor.addAllowedIp(ip); 
+		return new ResponseEntity<>("IP added successfully", HttpStatus.OK);
+	}
 
 	@GetMapping("/getallevents")
 	public ResponseEntity<List<Event>> getAllEvents() {
@@ -37,7 +49,7 @@ public class EventController {
 	@GetMapping("/geteventbyid/{id}")
 	public ResponseEntity<Optional<Event>> getEventById(@PathVariable Long id) {
 		Optional<Event> getEventById = null;
-		try {
+		try {  
 			getEventById = eventService.getEventById(id);
 		} catch (Exception e) {
 			System.out.println("getEventById Error : " + e);
@@ -46,7 +58,7 @@ public class EventController {
 	}
 
 	@PostMapping("/createevent")
-	public ResponseEntity<Event> createEvent(@RequestBody Event event,  HttpServletRequest request) {
+	public ResponseEntity<Event> createEvent(@RequestBody Event event, HttpServletRequest request) {
 		Event createdevent = null;
 		try {
 			createdevent = eventService.saveEvent(event, request);

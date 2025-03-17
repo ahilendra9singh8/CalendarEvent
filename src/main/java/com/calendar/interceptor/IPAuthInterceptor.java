@@ -173,4 +173,12 @@ public class IPAuthInterceptor implements HandlerInterceptor {
 			return null;
 		}
 	}
+
+	public void addAllowedIp(String ip) {
+		if (!allowedIps.contains(ip)) {
+			allowedIps.add(ip);
+			LOGGER.info("Added IP to allowed list: " + ip);  
+			LOGGER.info("All allowedIps : " + allowedIps);
+		}
+	}
 }
