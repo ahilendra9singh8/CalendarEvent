@@ -1,21 +1,26 @@
 package com.calendar.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.calendar.entity.Event;
-import com.calendar.interceptor.IPAuthInterceptor;
 import com.calendar.serviceimpl.EventService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-//@CrossOrigin(origins = "http://localhost:3000")
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/events")
@@ -24,37 +29,16 @@ public class EventController {
 	@Autowired
 	EventService eventService;
 
-	@Autowired
-	private IPAuthInterceptor ipAuthInterceptor;
-
-	@PostMapping("/addallowedip")
-	public ResponseEntity<String> addAllowedIp(@RequestBody Map<String, String> body) {
-		String ip = body.get("ip"); 
-		ipAuthInterceptor.addAllowedIp(ip); 
-		return new ResponseEntity<>("IP added successfully", HttpStatus.OK);
-	}
-
 	@GetMapping("/getallevents")
-	public ResponseEntity<List<Event>> getAllEvents() {
+	public ResponseEntity<List<Event>> getAllEvents(
+			@RequestHeader(value = "X-Client-IP", required = false) String ipAddress) {
 		List<Event> getAllEvents = null;
 		try {
-			getAllEvents = eventService.getAllEvents();
-
+			getAllEvents = eventService.getEventsByIpAddress(ipAddress);
 		} catch (Exception e) {
 			System.out.println("getAllEvents Error : " + e);
 		}
 		return new ResponseEntity<List<Event>>(getAllEvents, HttpStatus.OK);
-	}
-
-	@GetMapping("/geteventbyid/{id}")
-	public ResponseEntity<Optional<Event>> getEventById(@PathVariable Long id) {
-		Optional<Event> getEventById = null;
-		try {  
-			getEventById = eventService.getEventById(id);
-		} catch (Exception e) {
-			System.out.println("getEventById Error : " + e);
-		}
-		return new ResponseEntity<Optional<Event>>(getEventById, HttpStatus.OK);
 	}
 
 	@PostMapping("/createevent")
