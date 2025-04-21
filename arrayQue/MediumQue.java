@@ -1,7 +1,9 @@
 package arrayQue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MediumQue {
@@ -74,15 +76,63 @@ public class MediumQue {
         // int n = intArray.length;
         // Map<Integer, Integer> map = new HashMap<>();
         // for (int i = 0; i < n; i++) {
-        //     map.put(intArray[i], map.getOrDefault(intArray[i], 0) + 1);
+        // map.put(intArray[i], map.getOrDefault(intArray[i], 0) + 1);
         // }
         // for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-        //     if (entry.getValue() > n / 2) {
-        //         System.out.println(entry.getKey());
-        //     }
+        // if (entry.getValue() > n / 2) {
+        // System.out.println(entry.getKey());
+        // }
         // }
 
-        // 4.
+        // // 4.Kadane algorithm - maximum subarray sum
+        // int[] arr = { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+        // int maxsum = 0;
+        // int n = arr.length;
+        // for (int i = 0; i < n; i++) {
+        // int sum = 0;
+        // for (int j = i; j < n; j++) {
+        // sum += arr[j];
+        // maxsum = Math.max(maxsum, sum);
+        // }
+        // }
+        // System.out.println(maxsum);
 
+        // // 5. print subarray of maximum subarray sum
+        // int[] arr = { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+        // int maxsum = 0;
+        // int start = -1;
+        // int end = -1;
+        // int n = arr.length;
+        // for (int i = 0; i < n; i++) {
+        // int sum = 0;
+        // for (int j = i; j < n; j++) {
+        // sum += arr[j];
+        // if (sum > maxsum) {
+        // maxsum = sum;
+        // start = i;
+        // end = j;
+        // }
+        // }
+        // }
+        // for (int k = start; k <= end; k++) {
+        // System.out.println(arr[k]);
+        // }
+
+        // // 6. Stock Buy and Sell
+        // int[] arr = { 7, 1, 5, 3, 6, 4 };
+        // int profit = 0;
+        // int n = arr.length;
+        // for (int i = 0; i < n; i++) {
+        // for (int j = i + 1; j < n; j++) {
+        // if (arr[j] > arr[i]) {
+        // int val = arr[j] - arr[i];
+        // profit = Math.max(val, profit);
+        // }
+        // }
+        // }
+        // System.out.println(profit);
+
+        // 7. Rearrange Array Elements by Sign
+        
     }
 }
